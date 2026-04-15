@@ -2,251 +2,389 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wedge Stats">
-<title>⛳ Wedge Stats</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232d7a3a'/><text y='78' x='50' text-anchor='middle' font-size='65'>⛳</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232d7a3a'/><text y='78' x='50' text-anchor='middle' font-size='65'>⛳</text></svg>">
+<meta name="theme-color" content="#0d2818">
+<title>Wedge Stats</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d2818'/><text y='78' x='50' text-anchor='middle' font-size='62'>⛳</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #ffffff;
-    --bg2: #f5f5f3;
-    --bg3: #eeede9;
-    --text: #1a1a18;
-    --text2: #6b6b67;
-    --border: rgba(0,0,0,0.12);
-    --border2: rgba(0,0,0,0.22);
-    --radius: 10px;
-    --radius-lg: 14px;
-    --green: #0F6E56;
-    --green-bg: #E1F5EE;
-    --red: #A32D2D;
-    --red-bg: #FCEBEB;
-    --amber: #854F0B;
-    --amber-bg: #FAEEDA;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1e1e1c;
-      --bg2: #2a2a28;
-      --bg3: #333330;
-      --text: #f0efe8;
-      --text2: #9a9a94;
-      --border: rgba(255,255,255,0.12);
-      --border2: rgba(255,255,255,0.22);
-      --green: #5DCAA5;
-      --green-bg: #085041;
-      --red: #F09595;
-      --red-bg: #4A1B0C;
-      --amber: #FAC775;
-      --amber-bg: #412402;
-    }
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); font-size: 15px; line-height: 1.5; }
-  .app { max-width: 700px; margin: 0 auto; padding: 0 0 80px; }
+:root {
+  --bg: #0d1f12;
+  --bg2: #162a1c;
+  --bg3: #1e3828;
+  --card: #1a2e20;
+  --card2: #213826;
+  --accent: #4ade80;
+  --accent2: #86efac;
+  --accent-dim: rgba(74,222,128,0.12);
+  --accent-dim2: rgba(74,222,128,0.06);
+  --text: #f0faf2;
+  --text2: #8aab92;
+  --text3: #567a5e;
+  --yellow: #fbbf24;
+  --yellow-dim: rgba(251,191,36,0.15);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.15);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.15);
+  --border: rgba(74,222,128,0.1);
+  --border2: rgba(74,222,128,0.2);
+  --radius: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  /* Header */
-  .header { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 14px 16px 10px; position: sticky; top: 0; z-index: 100; }
-  .header h1 { font-size: 18px; font-weight: 600; }
-  .header p { font-size: 12px; color: var(--text2); margin-top: 1px; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* Bottom tabs */
-  .bottom-tabs { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 0.5px solid var(--border); display: flex; z-index: 100; }
-  .btab { flex: 1; padding: 10px 4px 12px; text-align: center; cursor: pointer; font-size: 10px; color: var(--text2); border: none; background: transparent; }
-  .btab svg { display: block; margin: 0 auto 3px; width: 22px; height: 22px; }
-  .btab.active { color: var(--green); }
-  .btab.active svg { stroke: var(--green); }
-  .btab svg { stroke: var(--text2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
-  /* Sections */
-  .section { display: none; padding: 14px 12px; }
-  .section.active { display: block; }
+/* App container */
+.app { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
 
-  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 14px; margin-bottom: 12px; }
-  .section-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; }
+/* Header */
+.header {
+  padding: 52px 20px 16px;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+  position: sticky; top: 0; z-index: 50;
+}
+.header-row { display: flex; align-items: center; justify-content: space-between; }
+.app-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+.app-title span { color: var(--accent); }
+.header-sub { font-size: 12px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
+.header-icon { width: 42px; height: 42px; background: var(--accent-dim); border: 1px solid var(--border2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-  .form-group { margin-bottom: 10px; }
-  label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 4px; }
-  select, input[type=number], input[type=text] {
-    width: 100%; padding: 9px 12px; border: 0.5px solid var(--border2);
-    border-radius: var(--radius); font-size: 15px; background: var(--bg);
-    color: var(--text); appearance: none; -webkit-appearance: none;
-  }
-  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+/* Bottom nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  background: rgba(13,31,18,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+  z-index: 100;
+}
+.nav-btn {
+  flex: 1; padding: 10px 4px 12px; display: flex; flex-direction: column;
+  align-items: center; gap: 4px; background: none; border: none; cursor: pointer;
+  color: var(--text3); font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-btn.active { color: var(--accent); }
+.nav-icon { width: 24px; height: 24px; position: relative; }
+.nav-btn.active .nav-dot { display: block; }
+.nav-dot { display: none; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); }
 
-  .btn { padding: 10px 20px; border: 0.5px solid var(--border2); border-radius: var(--radius); font-size: 15px; cursor: pointer; background: transparent; color: var(--text); width: 100%; margin-top: 4px; }
-  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 500; }
-  .btn-sm { padding: 4px 10px; font-size: 12px; width: auto; }
-  .btn-danger { color: var(--red); border-color: var(--red); }
+/* Sections */
+.section { display: none; padding: 16px 16px 100px; }
+.section.active { display: block; }
 
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .stat-card { background: var(--bg2); border-radius: var(--radius); padding: 12px; }
-  .stat-label { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
-  .stat-val { font-size: 22px; font-weight: 600; }
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.card-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.card-icon.green { background: var(--accent-dim); }
+.card-icon.yellow { background: var(--yellow-dim); }
+.card-icon.red { background: var(--red-dim); }
+.card-icon.blue { background: var(--blue-dim); }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.card-subtitle { font-size: 11px; color: var(--text3); margin-top: 1px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { font-weight: 500; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 8px; border-bottom: 0.5px solid var(--border); text-align: left; }
-  td { padding: 8px 8px; border-bottom: 0.5px solid var(--border); vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
+/* Form */
+.form-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
+.form-field { margin-bottom: 12px; }
+select, input[type=number], input[type=text] {
+  width: 100%; padding: 11px 14px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  appearance: none; -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+select:focus, input:focus { outline: none; border-color: var(--accent); }
+.form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
-  .b-face { background: var(--red-bg); color: var(--red); }
-  .b-arr { background: var(--green-bg); color: var(--green); }
-  .b-trav { background: var(--amber-bg); color: var(--amber); }
-  .b-calm { background: var(--bg2); color: var(--text2); }
-  .amp-badge { background: var(--bg2); color: var(--text2); font-size: 11px; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+/* Buttons */
+.btn-primary {
+  width: 100%; padding: 13px;
+  background: var(--accent); color: #0d1f12;
+  border: none; border-radius: var(--radius); font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  letter-spacing: 0.02em;
+}
+.btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+.btn-sm {
+  padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border2); background: transparent;
+  color: var(--text2); font-family: 'DM Sans', sans-serif;
+}
+.btn-danger { color: var(--red); border-color: rgba(248,113,113,0.3); }
+.btn-accent { color: var(--accent); border-color: var(--border2); }
 
-  .empty { text-align: center; color: var(--text2); font-size: 14px; padding: 2rem 1rem; }
-  .save-msg { font-size: 13px; color: var(--green); margin-top: 8px; text-align: center; min-height: 20px; }
+/* Stats grid */
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-tile {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 12px;
+  position: relative; overflow: hidden;
+}
+.stat-tile::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent); opacity: 0.6;
+}
+.stat-tile.yellow::before { background: var(--yellow); }
+.stat-tile.red::before { background: var(--red); }
+.stat-tile.blue::before { background: var(--blue); }
+.stat-num { font-size: 28px; font-weight: 700; color: var(--text); font-family: 'DM Mono', monospace; line-height: 1; }
+.stat-unit { font-size: 13px; color: var(--text3); font-weight: 400; margin-left: 2px; }
+.stat-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; font-weight: 500; }
 
-  .filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-  .filter-bar > div { flex: 1; min-width: 100px; }
+/* Tags / Badges */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+.badge-face { background: var(--red-dim); color: var(--red); }
+.badge-arr { background: var(--accent-dim); color: var(--accent); }
+.badge-trav { background: var(--yellow-dim); color: var(--yellow); }
+.badge-calm { background: rgba(255,255,255,0.06); color: var(--text3); }
+.badge-club { background: var(--blue-dim); color: var(--blue); font-family: 'DM Mono', monospace; }
+.badge-amp { background: var(--accent-dim2); color: var(--text2); border: 1px solid var(--border); font-size: 10px; padding: 2px 8px; border-radius: 99px; }
 
-  .avg-wrap { overflow-x: auto; }
-  .print-bar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
-  .print-bar > div:first-child { flex: 1; }
-  .print-bar > div:last-child { flex-shrink: 0; }
+/* Shot list */
+.shot-item {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px;
+  animation: slideIn 0.25s ease;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.shot-dist { font-size: 24px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent); min-width: 60px; }
+.shot-dist span { font-size: 12px; color: var(--text3); font-weight: 400; }
+.shot-meta { flex: 1; min-width: 0; }
+.shot-meta-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.shot-note { font-size: 11px; color: var(--text3); margin-top: 4px; font-style: italic; }
+.shot-date { font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; }
 
-  .del-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-  .del-row:last-child { border-bottom: none; }
+/* Filter bar */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-chip {
+  padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 500;
+  border: 1px solid var(--border); background: transparent; color: var(--text3);
+  cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.filter-chip.active { background: var(--accent-dim); border-color: var(--border2); color: var(--accent); }
 
-  @media print {
-    .header, .bottom-tabs, .print-bar, .btn, .filter-bar { display: none !important; }
-    .section { display: block !important; padding: 0; }
-    #tab-saisie, #tab-stats, #tab-clubs { display: none !important; }
-    #tab-tableau { display: block !important; }
-    body { background: white; }
-    .card { border: 1px solid #ccc; margin-bottom: 16px; }
-    .stat-card { border: 1px solid #ccc; }
-  }
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
+td { padding: 9px 8px; border-bottom: 1px solid rgba(74,222,128,0.05); text-align: center; color: var(--text2); }
+tr:last-child td { border-bottom: none; }
+td.amp-col { text-align: left; }
+td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 13px; }
+
+/* Club pills */
+.club-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.club-row:last-child { border-bottom: none; }
+.club-name { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.club-count { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--accent); color: #0d1f12; padding: 10px 20px;
+  border-radius: 99px; font-size: 13px; font-weight: 700;
+  opacity: 0; transition: all 0.3s; z-index: 200; white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 40px 20px; }
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-text { color: var(--text3); font-size: 14px; }
+
+/* Section heading */
+.section-heading { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; padding: 0 2px; }
+
+/* Print */
+@media print {
+  .header, .bottom-nav, .filter-bar, .btn-primary, .btn-sm, .toast { display: none !important; }
+  .section { display: block !important; padding: 0; }
+  #tab-saisie, #tab-stats, #tab-clubs { display: none !important; }
+  #tab-tableau { display: block !important; }
+  body { background: white; color: black; }
+  .card { border: 1px solid #ccc; background: white; }
+}
+
+/* Separator */
+.sep { height: 1px; background: var(--border); margin: 14px 0; }
 </style>
 </head>
 <body>
-
-<div class="header">
-  <h1>⛳ Wedge Stats</h1>
-  <p>Suivi de tes coups de wedge</p>
-</div>
-
 <div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <div class="app-title">Wedge<span>Stats</span></div>
+        <div class="header-sub" id="header-sub">0 coups enregistrés</div>
+      </div>
+      <div class="header-icon">⛳</div>
+    </div>
+  </div>
 
   <!-- SAISIE -->
   <div class="section active" id="tab-saisie">
     <div class="card">
-      <div class="section-title">Nouveau coup</div>
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Club</label>
+      <div class="card-header">
+        <div class="card-icon green">🏌️</div>
+        <div><div class="card-title">Nouveau coup</div><div class="card-subtitle">Enregistre ta frappe</div></div>
+      </div>
+
+      <div class="form-row2">
+        <div class="form-field">
+          <label class="form-label">Club</label>
           <select id="inp-club"></select>
         </div>
-        <div class="form-group">
-          <label>Amplitude</label>
-          <select id="inp-amp">
-            <option>7h–9h</option>
-            <option>9h–10h30</option>
-            <option>10h30–12h (plein)</option>
-            <option>3h–5h</option>
-            <option>5h–7h</option>
-          </select>
+        <div class="form-field">
+          <label class="form-label">Distance (m)</label>
+          <input type="number" id="inp-dist" min="0" max="250" placeholder="85">
         </div>
       </div>
-      <div class="form-group">
-        <label>Distance (mètres)</label>
-        <input type="number" id="inp-dist" min="0" max="250" placeholder="Ex: 85">
+
+      <div class="form-field">
+        <label class="form-label">Amplitude</label>
+        <select id="inp-amp">
+          <option>7h – 9h</option>
+          <option>9h – 10h30</option>
+          <option>10h30 – 12h (plein)</option>
+          <option>3h – 5h</option>
+          <option>5h – 7h</option>
+        </select>
       </div>
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Direction du vent</label>
+
+      <div class="form-row2">
+        <div class="form-field">
+          <label class="form-label">Direction vent</label>
           <select id="inp-wind-dir">
-            <option value="calme">Calme</option>
-            <option value="face">Face</option>
-            <option value="arrière">Arrière</option>
-            <option value="travers">Travers</option>
-            <option value="face-travers">Face-travers</option>
-            <option value="arrière-travers">Arr.-travers</option>
+            <option value="calme">🌀 Calme</option>
+            <option value="face">⬆️ Face</option>
+            <option value="arrière">⬇️ Arrière</option>
+            <option value="travers">➡️ Travers</option>
+            <option value="face-travers">↗️ Face-travers</option>
+            <option value="arrière-travers">↘️ Arr.-travers</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Force du vent</label>
+        <div class="form-field">
+          <label class="form-label">Force vent</label>
           <select id="inp-wind-str">
-            <option value="0">Calme</option>
-            <option value="1">1 — Légère brise</option>
-            <option value="2">2 — Modéré</option>
-            <option value="3">3 — Fort</option>
-            <option value="4">4 — Très fort</option>
+            <option value="0">— Calme</option>
+            <option value="1">1 — Légère</option>
+            <option value="2">2 — Modérée</option>
+            <option value="3">3 — Forte</option>
+            <option value="4">4 — Très forte</option>
           </select>
         </div>
       </div>
-      <div class="form-group">
-        <label>Note (optionnel)</label>
-        <input type="text" id="inp-note" placeholder="Ex: propre, thin, fat...">
+
+      <div class="form-field">
+        <label class="form-label">Note (optionnel)</label>
+        <input type="text" id="inp-note" placeholder="propre, thin, fat, à droite...">
       </div>
-      <button class="btn btn-primary" onclick="addShot()">Enregistrer le coup</button>
-      <div class="save-msg" id="save-msg"></div>
+
+      <button class="btn-primary" onclick="addShot()">+ Enregistrer le coup</button>
     </div>
 
-    <div class="card">
-      <div class="section-title">Derniers coups</div>
-      <div id="recent-shots"><div class="empty">Aucun coup enregistré</div></div>
+    <div class="section-heading">Derniers coups</div>
+    <div id="recent-shots">
+      <div class="empty-state"><div class="empty-icon">🏌️</div><div class="empty-text">Aucun coup enregistré</div></div>
     </div>
   </div>
 
   <!-- STATS -->
   <div class="section" id="tab-stats">
-    <div class="filter-bar">
-      <div>
-        <label>Club</label>
-        <select id="flt-club" onchange="renderStats()">
-          <option value="">Tous</option>
-        </select>
-      </div>
-      <div>
-        <label>Amplitude</label>
-        <select id="flt-amp" onchange="renderStats()">
-          <option value="">Toutes</option>
-          <option>7h–9h</option>
-          <option>9h–10h30</option>
-          <option>10h30–12h (plein)</option>
-          <option>3h–5h</option>
-          <option>5h–7h</option>
-        </select>
-      </div>
-      <div>
-        <label>Vent</label>
-        <select id="flt-wind" onchange="renderStats()">
-          <option value="">Tous</option>
-          <option value="calme">Calme</option>
-          <option value="face">Face</option>
-          <option value="arrière">Arrière</option>
-          <option value="travers">Travers</option>
-          <option value="face-travers">Face-travers</option>
-          <option value="arrière-travers">Arr.-travers</option>
-        </select>
+    <div class="section-heading">Filtres</div>
+    <div class="card" style="padding: 12px;">
+      <div class="form-row3">
+        <div>
+          <label class="form-label">Club</label>
+          <select id="flt-club" onchange="renderStats()">
+            <option value="">Tous</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Amplitude</label>
+          <select id="flt-amp" onchange="renderStats()">
+            <option value="">Toutes</option>
+            <option>7h – 9h</option>
+            <option>9h – 10h30</option>
+            <option>10h30 – 12h (plein)</option>
+            <option>3h – 5h</option>
+            <option>5h – 7h</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Vent</label>
+          <select id="flt-wind" onchange="renderStats()">
+            <option value="">Tous</option>
+            <option value="calme">Calme</option>
+            <option value="face">Face</option>
+            <option value="arrière">Arrière</option>
+            <option value="travers">Travers</option>
+            <option value="face-travers">Face-trav.</option>
+            <option value="arrière-travers">Arr.-trav.</option>
+          </select>
+        </div>
       </div>
     </div>
-    <div class="stats-grid" id="stats-cards"></div>
-    <div class="card">
-      <div class="section-title">Coups filtrés</div>
-      <div id="shots-table"><div class="empty">Aucune donnée</div></div>
+
+    <div class="stats-row" id="stats-tiles"></div>
+
+    <div class="section-heading">Détail des coups</div>
+    <div id="shots-table">
+      <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Aucune donnée</div></div>
     </div>
   </div>
 
-  <!-- TABLEAU MOYENNES -->
+  <!-- TABLEAU -->
   <div class="section" id="tab-tableau">
-    <div class="print-bar">
-      <div>
-        <label>Club</label>
+    <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;">
+      <div style="flex:1;">
+        <label class="form-label">Club</label>
         <select id="tbl-club" onchange="renderAvgTable()">
           <option value="">Tous les clubs</option>
         </select>
       </div>
-      <div>
-        <button class="btn btn-sm" onclick="window.print()" style="white-space:nowrap;">🖨️ Imprimer</button>
-      </div>
+      <button class="btn-sm btn-accent" onclick="window.print()" style="padding:9px 16px;font-size:13px;">🖨️ Imprimer</button>
     </div>
     <div id="avg-table"></div>
   </div>
@@ -254,64 +392,100 @@
   <!-- CLUBS -->
   <div class="section" id="tab-clubs">
     <div class="card">
-      <div class="section-title">Mes clubs</div>
-      <div class="form-row-2" style="margin-bottom:10px;">
-        <input type="text" id="new-club" placeholder="Ex: SW 58°">
-        <button class="btn btn-primary" onclick="addClub()">Ajouter</button>
+      <div class="card-header">
+        <div class="card-icon blue">🏷️</div>
+        <div><div class="card-title">Mes clubs</div><div class="card-subtitle">Ajoute tes wedges</div></div>
       </div>
+      <div class="form-row2" style="margin-bottom:0;">
+        <input type="text" id="new-club" placeholder="Ex: SW 58°, PW...">
+        <button class="btn-primary" onclick="addClub()" style="padding:11px;">Ajouter</button>
+      </div>
+      <div class="sep"></div>
       <div id="clubs-list"></div>
     </div>
+
     <div class="card">
-      <div class="section-title">Données</div>
-      <button class="btn" onclick="exportData()" style="margin-bottom:8px;">📤 Exporter mes données (JSON)</button>
-      <div style="font-size:12px;color:var(--text2);margin-top:6px;" id="shot-count"></div>
+      <div class="card-header">
+        <div class="card-icon yellow">💾</div>
+        <div><div class="card-title">Données</div><div class="card-subtitle" id="shot-count-lbl">0 coups</div></div>
+      </div>
+      <button class="btn-sm btn-accent" onclick="exportData()" style="width:100%;padding:10px;font-size:13px;">📤 Exporter mes données (JSON)</button>
     </div>
   </div>
 
 </div>
 
 <!-- Bottom navigation -->
-<nav class="bottom-tabs">
-  <button class="btab active" onclick="showTab('saisie', this)">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showTab('saisie',this)" id="nav-saisie">
+    <div class="nav-icon">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+      <div class="nav-dot"></div>
+    </div>
     Saisie
   </button>
-  <button class="btab" onclick="showTab('stats', this)">
-    <svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+  <button class="nav-btn" onclick="showTab('stats',this)" id="nav-stats">
+    <div class="nav-icon">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+      <div class="nav-dot"></div>
+    </div>
     Stats
   </button>
-  <button class="btab" onclick="showTab('tableau', this)">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+  <button class="nav-btn" onclick="showTab('tableau',this)" id="nav-tableau">
+    <div class="nav-icon">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+      <div class="nav-dot"></div>
+    </div>
     Tableau
   </button>
-  <button class="btab" onclick="showTab('clubs', this)">
-    <svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5 5 8c0 4 7 14 7 14s7-10 7-14c0-3-2.7-6-7-6z"/><circle cx="12" cy="8" r="2"/></svg>
+  <button class="nav-btn" onclick="showTab('clubs',this)" id="nav-clubs">
+    <div class="nav-icon">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      <div class="nav-dot"></div>
+    </div>
     Clubs
   </button>
 </nav>
 
-<script>
-let data = JSON.parse(localStorage.getItem('wedge_data') || '{"clubs":["PW","GW 50°","SW 56°","LW 60°"],"shots":[]}');
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
-function save() { localStorage.setItem('wedge_data', JSON.stringify(data)); updateShotCount(); }
+<script>
+let data = JSON.parse(localStorage.getItem('wedge_v2') || '{"clubs":["PW","GW 50°","SW 56°","LW 60°"],"shots":[]}');
+
+function save() { localStorage.setItem('wedge_v2', JSON.stringify(data)); updateHeader(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function updateHeader() {
+  document.getElementById('header-sub').textContent = `${data.shots.length} coup${data.shots.length !== 1 ? 's' : ''} enregistré${data.shots.length !== 1 ? 's' : ''}`;
+  const lbl = document.getElementById('shot-count-lbl');
+  if (lbl) lbl.textContent = `${data.shots.length} coup${data.shots.length !== 1 ? 's' : ''} enregistré${data.shots.length !== 1 ? 's' : ''}`;
+}
 
 function showTab(t, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
-  document.querySelectorAll('.btab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   if (t === 'stats') renderStats();
   if (t === 'tableau') renderAvgTable();
-  if (t === 'clubs') { renderClubs(); updateShotCount(); }
+  if (t === 'clubs') renderClubs();
 }
 
 function windBadge(dir, str) {
-  if (!dir || dir === 'calme') return '<span class="badge b-calm">Calme</span>';
-  const cls = dir.startsWith('face') ? 'b-face' : dir.startsWith('arr') ? 'b-arr' : 'b-trav';
+  if (!dir || dir === 'calme') return '<span class="badge badge-calm">calme</span>';
+  const cls = dir.startsWith('face') ? 'badge-face' : dir.startsWith('arr') ? 'badge-arr' : 'badge-trav';
+  const icons = {face:'⬆️',arrière:'⬇️',travers:'➡️','face-travers':'↗️','arrière-travers':'↘️'};
   const force = ['','1','2','3','4'][+str] || '';
-  return `<span class="badge ${cls}">${dir}${force ? ' ' + force : ''}</span>`;
+  return `<span class="badge ${cls}">${icons[dir]||''} ${dir}${force ? ' · ' + force : ''}</span>`;
 }
 
-function refreshClubSelects() {
+function refreshSelects() {
   ['inp-club','flt-club','tbl-club'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -329,7 +503,8 @@ function addClub() {
   save();
   document.getElementById('new-club').value = '';
   renderClubs();
-  refreshClubSelects();
+  refreshSelects();
+  showToast('✓ Club ajouté');
 }
 
 function removeClub(i) {
@@ -337,21 +512,23 @@ function removeClub(i) {
   data.clubs.splice(i, 1);
   save();
   renderClubs();
-  refreshClubSelects();
+  refreshSelects();
 }
 
 function renderClubs() {
   const el = document.getElementById('clubs-list');
-  if (!data.clubs.length) { el.innerHTML = '<div class="empty">Aucun club</div>'; return; }
-  el.innerHTML = data.clubs.map((c,i) => `<div class="del-row">
-    <span style="font-size:15px;">${c}</span>
-    <button class="btn btn-sm btn-danger" onclick="removeClub(${i})">Supprimer</button>
-  </div>`).join('');
-}
-
-function updateShotCount() {
-  const el = document.getElementById('shot-count');
-  if (el) el.textContent = `${data.shots.length} coup(s) enregistré(s)`;
+  if (!data.clubs.length) { el.innerHTML = '<div class="empty-text" style="padding:12px 0;">Aucun club</div>'; return; }
+  el.innerHTML = data.clubs.map((c, i) => {
+    const count = data.shots.filter(s => s.club === c).length;
+    return `<div class="club-row">
+      <div class="club-name">
+        <span class="badge badge-club">${c}</span>
+        <span class="club-count">${count} coup${count !== 1 ? 's' : ''}</span>
+      </div>
+      <button class="btn-sm btn-danger" onclick="removeClub(${i})">Supprimer</button>
+    </div>`;
+  }).join('');
+  updateHeader();
 }
 
 function addShot() {
@@ -361,37 +538,13 @@ function addShot() {
   const windDir = document.getElementById('inp-wind-dir').value;
   const windStr = document.getElementById('inp-wind-str').value;
   const note = document.getElementById('inp-note').value.trim();
-  if (!club || isNaN(dist) || dist <= 0) {
-    document.getElementById('save-msg').textContent = '⚠️ Renseigne le club et la distance.';
-    document.getElementById('save-msg').style.color = 'var(--red)';
-    return;
-  }
+  if (!club || isNaN(dist) || dist <= 0) { showToast('⚠️ Club et distance requis'); return; }
   data.shots.unshift({ club, amp, dist, windDir, windStr, note, date: new Date().toLocaleDateString('fr-FR') });
   save();
   document.getElementById('inp-dist').value = '';
   document.getElementById('inp-note').value = '';
-  const msg = document.getElementById('save-msg');
-  msg.style.color = 'var(--green)';
-  msg.textContent = '✓ Coup enregistré !';
-  setTimeout(() => msg.textContent = '', 2500);
+  showToast(`✓ ${dist} m enregistré !`);
   renderRecent();
-}
-
-function renderRecent() {
-  const el = document.getElementById('recent-shots');
-  if (!data.shots.length) { el.innerHTML = '<div class="empty">Aucun coup enregistré</div>'; return; }
-  const rows = data.shots.slice(0, 30).map((s, i) => `<tr>
-    <td style="white-space:nowrap;font-size:12px;color:var(--text2);">${s.date}</td>
-    <td><strong>${s.club}</strong></td>
-    <td><span class="amp-badge">${s.amp}</span></td>
-    <td style="font-weight:600;">${s.dist} m</td>
-    <td>${windBadge(s.windDir, s.windStr)}</td>
-    <td><button class="btn btn-sm btn-danger" onclick="removeShot(${i})" style="padding:2px 8px;font-size:11px;">×</button></td>
-  </tr>`).join('');
-  el.innerHTML = `<div style="overflow-x:auto;"><table>
-    <thead><tr><th>Date</th><th>Club</th><th>Amplitude</th><th>Dist.</th><th>Vent</th><th></th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
 }
 
 function removeShot(i) {
@@ -399,6 +552,30 @@ function removeShot(i) {
   data.shots.splice(i, 1);
   save();
   renderRecent();
+}
+
+function renderRecent() {
+  const el = document.getElementById('recent-shots');
+  if (!data.shots.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🏌️</div><div class="empty-text">Aucun coup enregistré</div></div>';
+    return;
+  }
+  el.innerHTML = data.shots.slice(0, 30).map((s, i) => `
+    <div class="shot-item">
+      <div class="shot-dist">${s.dist}<span> m</span></div>
+      <div class="shot-meta">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span class="badge badge-club">${s.club}</span>
+          <span class="shot-date">${s.date}</span>
+        </div>
+        <div class="shot-meta-row">
+          <span class="badge-amp">${s.amp}</span>
+          ${windBadge(s.windDir, s.windStr)}
+        </div>
+        ${s.note ? `<div class="shot-note">${s.note}</div>` : ''}
+      </div>
+      <button class="btn-sm btn-danger" onclick="removeShot(${i})" style="padding:4px 8px;">✕</button>
+    </div>`).join('');
 }
 
 function filterShots() {
@@ -414,74 +591,82 @@ function filterShots() {
 
 function renderStats() {
   const shots = filterShots();
-  const cards = document.getElementById('stats-cards');
+  const tiles = document.getElementById('stats-tiles');
   if (!shots.length) {
-    cards.innerHTML = '';
-    document.getElementById('shots-table').innerHTML = '<div class="empty">Aucune donnée pour ces filtres</div>';
+    tiles.innerHTML = '';
+    document.getElementById('shots-table').innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Aucune donnée pour ces filtres</div></div>';
     return;
   }
   const dists = shots.map(s => s.dist);
-  const avg = Math.round(dists.reduce((a,b) => a+b, 0) / dists.length);
-  cards.innerHTML = `
-    <div class="stat-card"><div class="stat-label">Coups</div><div class="stat-val">${shots.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Moyenne</div><div class="stat-val">${avg} m</div></div>
-    <div class="stat-card"><div class="stat-label">Mini</div><div class="stat-val">${Math.min(...dists)} m</div></div>
-    <div class="stat-card"><div class="stat-label">Maxi</div><div class="stat-val">${Math.max(...dists)} m</div></div>
+  const avg = Math.round(dists.reduce((a,b) => a+b,0) / dists.length);
+  const mn = Math.min(...dists);
+  const mx = Math.max(...dists);
+  const disp = Math.round(mx - mn);
+  tiles.innerHTML = `
+    <div class="stat-tile"><div class="stat-num">${shots.length}</div><div class="stat-lbl">coups</div></div>
+    <div class="stat-tile"><div class="stat-num">${avg}<span class="stat-unit">m</span></div><div class="stat-lbl">moyenne</div></div>
+    <div class="stat-tile yellow"><div class="stat-num">${mn}<span class="stat-unit">m</span></div><div class="stat-lbl">mini</div></div>
+    <div class="stat-tile red"><div class="stat-num">${mx}<span class="stat-unit">m</span></div><div class="stat-lbl">maxi</div></div>
   `;
-  const rows = shots.map(s => `<tr>
-    <td style="font-size:12px;color:var(--text2);">${s.date}</td>
-    <td><strong>${s.club}</strong></td>
-    <td><span class="amp-badge">${s.amp}</span></td>
-    <td style="font-weight:600;">${s.dist} m</td>
-    <td>${windBadge(s.windDir, s.windStr)}</td>
-    <td style="color:var(--text2);font-size:12px;">${s.note || ''}</td>
-  </tr>`).join('');
-  document.getElementById('shots-table').innerHTML = `<div style="overflow-x:auto;"><table>
-    <thead><tr><th>Date</th><th>Club</th><th>Amplitude</th><th>Dist.</th><th>Vent</th><th>Note</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
+  const rows = shots.map(s => `<div class="shot-item">
+    <div class="shot-dist">${s.dist}<span> m</span></div>
+    <div class="shot-meta">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="badge badge-club">${s.club}</span>
+        <span class="shot-date">${s.date}</span>
+      </div>
+      <div class="shot-meta-row">
+        <span class="badge-amp">${s.amp}</span>
+        ${windBadge(s.windDir, s.windStr)}
+      </div>
+      ${s.note ? `<div class="shot-note">${s.note}</div>` : ''}
+    </div>
+  </div>`).join('');
+  document.getElementById('shots-table').innerHTML = rows;
 }
 
 function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
 
 function renderAvgTable() {
   const clubFilter = document.getElementById('tbl-club')?.value || '';
-  const amps = ['7h–9h','9h–10h30','10h30–12h (plein)','3h–5h','5h–7h'];
+  const amps = ['7h – 9h','9h – 10h30','10h30 – 12h (plein)','3h – 5h','5h – 7h'];
   const winds = [
     { key: 'calme', label: 'Calme' },
     { key: 'face', label: 'Face' },
-    { key: 'face-travers', label: 'Face-trav.' },
+    { key: 'face-travers', label: 'F-trav.' },
     { key: 'travers', label: 'Travers' },
-    { key: 'arrière-travers', label: 'Arr.-trav.' },
+    { key: 'arrière-travers', label: 'A-trav.' },
     { key: 'arrière', label: 'Arrière' },
   ];
   const clubs = clubFilter ? [clubFilter] : data.clubs;
   let html = '';
   clubs.forEach(club => {
     const cs = data.shots.filter(s => s.club === club);
-    html += `<div class="card">
-      <div class="section-title">${club}</div>
-      <div style="overflow-x:auto;">
-      <table>
+    html += `<div class="card" style="margin-bottom:16px;">
+      <div class="card-header" style="margin-bottom:10px;">
+        <div class="card-icon blue">🏷️</div>
+        <div><div class="card-title">${club}</div><div class="card-subtitle">${cs.length} coup${cs.length!==1?'s':''} enregistré${cs.length!==1?'s':''}</div></div>
+      </div>
+      <div class="table-wrap"><table>
         <thead><tr>
-          <th>Amplitude</th>
-          ${winds.map(w => `<th style="white-space:nowrap;">${w.label}</th>`).join('')}
+          <th style="text-align:left;">Amplitude</th>
+          ${winds.map(w=>`<th>${w.label}</th>`).join('')}
           <th>Global</th>
         </tr></thead>
         <tbody>`;
     amps.forEach(amp => {
       const rs = cs.filter(s => s.amp === amp);
-      const g = avg(rs.map(s => s.dist));
-      html += `<tr><td><span class="amp-badge">${amp}</span></td>`;
+      const g = avg(rs.map(s=>s.dist));
+      html += `<tr><td class="amp-col"><span class="badge-amp">${amp}</span></td>`;
       winds.forEach(w => {
-        const v = avg(rs.filter(s => s.windDir === w.key).map(s => s.dist));
-        html += `<td style="text-align:center;">${v !== null ? `<strong>${v}</strong>` : '<span style="color:var(--text2)">—</span>'}</td>`;
+        const v = avg(rs.filter(s=>s.windDir===w.key).map(s=>s.dist));
+        html += `<td>${v!==null?`<strong>${v}</strong>`:'<span style="color:var(--text3)">—</span>'}</td>`;
       });
-      html += `<td style="text-align:center;font-weight:600;">${g !== null ? g + ' m' : '—'}</td></tr>`;
+      html += `<td>${g!==null?`<strong>${g}</strong>`:'<span style="color:var(--text3)">—</span>'}</td></tr>`;
     });
     html += `</tbody></table></div></div>`;
   });
-  if (!html) html = '<div class="empty">Aucun club configuré</div>';
+  if (!html) html = '<div class="empty-state"><div class="empty-icon">🏷️</div><div class="empty-text">Aucun club configuré</div></div>';
   document.getElementById('avg-table').innerHTML = html;
 }
 
@@ -491,11 +676,13 @@ function exportData() {
   a.href = URL.createObjectURL(blob);
   a.download = 'wedge_stats_backup.json';
   a.click();
+  showToast('✓ Export téléchargé');
 }
 
-refreshClubSelects();
+// Init
+refreshSelects();
 renderRecent();
-updateShotCount();
+updateHeader();
 </script>
 </body>
 </html>
