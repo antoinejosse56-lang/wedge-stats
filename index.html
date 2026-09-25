@@ -9,7 +9,9 @@
 <meta name="apple-mobile-web-app-title" content="Wedge Stats">
 <meta name="theme-color" content="#0d2818">
 <title>Wedge Stats</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d2818'/><text y='78' x='50' text-anchor='middle' font-size='62'>⛳</text></svg>">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon512.png">
+<link rel="icon" href="icon192.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -127,6 +129,57 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
 .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .form-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
+/* Quick entry: club chips */
+.chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.chip-row::-webkit-scrollbar { display: none; }
+.club-chip {
+  flex-shrink: 0; padding: 9px 16px; border-radius: 99px;
+  border: 1px solid var(--border); background: transparent; color: var(--text2);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s;
+}
+.club-chip.active { background: var(--accent-dim); border-color: var(--border2); color: var(--accent); }
+
+/* Quick entry: amplitude buttons */
+.amp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.amp-btn {
+  padding: 9px 2px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--card2); color: var(--text2); font-family: 'DM Mono', monospace;
+  font-size: 11px; line-height: 1.5; text-align: center; cursor: pointer;
+}
+.amp-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+/* Quick entry: distance stepper */
+.dist-stepper {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 8px 10px;
+}
+.dist-btn {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+  border: 1px solid var(--border2); background: transparent; color: var(--accent);
+  font-size: 18px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+}
+.dist-input {
+  flex: 1; text-align: center; background: transparent !important; border: none !important;
+  font-size: 32px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--text);
+  padding: 0 !important; width: 100%;
+}
+.dist-input::-webkit-outer-spin-button, .dist-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dist-hint { font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+/* Quick entry: collapsible extra fields */
+.more-toggle {
+  width: 100%; padding: 9px; background: transparent; border: 1px dashed var(--border2);
+  border-radius: 10px; color: var(--text2); font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+}
+.more-fields { display: none; padding-top: 12px; margin-top: 10px; border-top: 1px solid var(--border); }
+.more-fields.open { display: block; }
+.chevron { display: inline-block; transition: transform 0.2s; }
+.chevron.open { transform: rotate(180deg); }
+
 /* Buttons */
 .btn-primary {
   width: 100%; padding: 13px;
@@ -222,9 +275,9 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
   background: var(--accent); color: #0d1f12; padding: 10px 20px;
   border-radius: 99px; font-size: 13px; font-weight: 700;
   opacity: 0; transition: all 0.3s; z-index: 200; white-space: nowrap;
-  pointer-events: none;
+  pointer-events: none; display: flex; align-items: center; gap: 10px;
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
 
 /* Empty state */
 .empty-state { text-align: center; padding: 40px 20px; }
@@ -238,7 +291,7 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
 @media print {
   .header, .bottom-nav, .filter-bar, .btn-primary, .btn-sm, .toast { display: none !important; }
   .section { display: block !important; padding: 0; }
-  #tab-saisie, #tab-stats, #tab-clubs { display: none !important; }
+  #tab-jouer, #tab-saisie, #tab-stats, #tab-clubs { display: none !important; }
   #tab-tableau { display: block !important; }
   body { background: white; color: black; }
   .card { border: 1px solid #ccc; background: white; }
@@ -262,40 +315,27 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
     </div>
   </div>
 
-  <!-- SAISIE -->
-  <div class="section active" id="tab-saisie">
+  <!-- JOUER -->
+  <div class="section active" id="tab-jouer">
     <div class="card">
       <div class="card-header">
-        <div class="card-icon green">🏌️</div>
-        <div><div class="card-title">Nouveau coup</div><div class="card-subtitle">Enregistre ta frappe</div></div>
-      </div>
-
-      <div class="form-row2">
-        <div class="form-field">
-          <label class="form-label">Club</label>
-          <select id="inp-club"></select>
-        </div>
-        <div class="form-field">
-          <label class="form-label">Distance (m)</label>
-          <input type="number" id="inp-dist" min="0" max="250" placeholder="85">
-        </div>
+        <div class="card-icon green">🎯</div>
+        <div><div class="card-title">Quel coup jouer ?</div><div class="card-subtitle">Distance cible + vent → club conseillé</div></div>
       </div>
 
       <div class="form-field">
-        <label class="form-label">Amplitude</label>
-        <select id="inp-amp">
-          <option>7h – 9h</option>
-          <option>9h – 10h30</option>
-          <option>10h30 – 12h (plein)</option>
-          <option>3h – 5h</option>
-          <option>5h – 7h</option>
-        </select>
+        <label class="form-label">Distance à la cible (m)</label>
+        <div class="dist-stepper">
+          <button type="button" class="dist-btn" onclick="stepPlayDist(-5)" aria-label="Diminuer">−</button>
+          <input type="number" id="play-dist" class="dist-input" min="0" max="250" placeholder="85">
+          <button type="button" class="dist-btn" onclick="stepPlayDist(5)" aria-label="Augmenter">+</button>
+        </div>
       </div>
 
       <div class="form-row2">
         <div class="form-field">
           <label class="form-label">Direction vent</label>
-          <select id="inp-wind-dir">
+          <select id="play-wind-dir">
             <option value="calme">🌀 Calme</option>
             <option value="face">⬆️ Face</option>
             <option value="arrière">⬇️ Arrière</option>
@@ -306,7 +346,7 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
         </div>
         <div class="form-field">
           <label class="form-label">Force vent</label>
-          <select id="inp-wind-str">
+          <select id="play-wind-str">
             <option value="0">— Calme</option>
             <option value="1">1 — Légère</option>
             <option value="2">2 — Modérée</option>
@@ -316,12 +356,76 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
         </div>
       </div>
 
+      <button class="btn-primary" onclick="computeShot()">Calculer le coup</button>
+    </div>
+
+    <div id="play-result"></div>
+  </div>
+
+  <!-- SAISIE -->
+  <div class="section" id="tab-saisie">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">🏌️</div>
+        <div><div class="card-title">Nouveau coup</div><div class="card-subtitle">Enregistre ta frappe</div></div>
+      </div>
+
       <div class="form-field">
-        <label class="form-label">Note (optionnel)</label>
-        <input type="text" id="inp-note" placeholder="propre, thin, fat, à droite...">
+        <label class="form-label">Club</label>
+        <div class="chip-row" id="club-chips"></div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Amplitude</label>
+        <div class="amp-grid" id="amp-buttons"></div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Distance (m)</label>
+        <div class="dist-stepper">
+          <button type="button" class="dist-btn" onclick="stepDist(-5)" aria-label="Diminuer">−</button>
+          <input type="number" id="inp-dist" class="dist-input" min="0" max="250" placeholder="85">
+          <button type="button" class="dist-btn" onclick="stepDist(5)" aria-label="Augmenter">+</button>
+        </div>
+        <div class="dist-hint">Tapez pour saisir, ou ajustez avec −/+</div>
       </div>
 
       <button class="btn-primary" onclick="addShot()">+ Enregistrer le coup</button>
+
+      <button type="button" class="more-toggle" onclick="toggleMore()" style="margin-top:10px;">
+        <span id="more-label">Plus d'options (vent, note)</span>
+        <span class="chevron" id="more-chevron">⌄</span>
+      </button>
+
+      <div class="more-fields" id="more-fields">
+        <div class="form-row2">
+          <div class="form-field">
+            <label class="form-label">Direction vent</label>
+            <select id="inp-wind-dir">
+              <option value="calme">🌀 Calme</option>
+              <option value="face">⬆️ Face</option>
+              <option value="arrière">⬇️ Arrière</option>
+              <option value="travers">➡️ Travers</option>
+              <option value="face-travers">↗️ Face-travers</option>
+              <option value="arrière-travers">↘️ Arr.-travers</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Force vent</label>
+            <select id="inp-wind-str">
+              <option value="0">— Calme</option>
+              <option value="1">1 — Légère</option>
+              <option value="2">2 — Modérée</option>
+              <option value="3">3 — Forte</option>
+              <option value="4">4 — Très forte</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field" style="margin-bottom:0;">
+          <label class="form-label">Note (optionnel)</label>
+          <input type="text" id="inp-note" placeholder="propre, thin, fat, à droite...">
+        </div>
+      </div>
     </div>
 
     <div class="section-heading">Derniers coups</div>
@@ -334,36 +438,25 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
   <div class="section" id="tab-stats">
     <div class="section-heading">Filtres</div>
     <div class="card" style="padding: 12px;">
-      <div class="form-row3">
-        <div>
-          <label class="form-label">Club</label>
-          <select id="flt-club" onchange="renderStats()">
-            <option value="">Tous</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Amplitude</label>
-          <select id="flt-amp" onchange="renderStats()">
-            <option value="">Toutes</option>
-            <option>7h – 9h</option>
-            <option>9h – 10h30</option>
-            <option>10h30 – 12h (plein)</option>
-            <option>3h – 5h</option>
-            <option>5h – 7h</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Vent</label>
-          <select id="flt-wind" onchange="renderStats()">
-            <option value="">Tous</option>
-            <option value="calme">Calme</option>
-            <option value="face">Face</option>
-            <option value="arrière">Arrière</option>
-            <option value="travers">Travers</option>
-            <option value="face-travers">Face-trav.</option>
-            <option value="arrière-travers">Arr.-trav.</option>
-          </select>
-        </div>
+      <div class="form-field">
+        <label class="form-label">Club</label>
+        <div class="chip-row" id="flt-club-chips"></div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Amplitude</label>
+        <div class="chip-row" id="flt-amp-chips"></div>
+      </div>
+      <div class="form-field" style="margin-bottom:0;">
+        <label class="form-label">Vent</label>
+        <select id="flt-wind" onchange="renderStats()">
+          <option value="">Tous</option>
+          <option value="calme">Calme</option>
+          <option value="face">Face</option>
+          <option value="arrière">Arrière</option>
+          <option value="travers">Travers</option>
+          <option value="face-travers">Face-trav.</option>
+          <option value="arrière-travers">Arr.-trav.</option>
+        </select>
       </div>
     </div>
 
@@ -377,14 +470,12 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
 
   <!-- TABLEAU -->
   <div class="section" id="tab-tableau">
-    <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;">
-      <div style="flex:1;">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
+      <div style="flex:1;min-width:0;">
         <label class="form-label">Club</label>
-        <select id="tbl-club" onchange="renderAvgTable()">
-          <option value="">Tous les clubs</option>
-        </select>
+        <div class="chip-row" id="tbl-club-chips"></div>
       </div>
-      <button class="btn-sm btn-accent" onclick="window.print()" style="padding:9px 16px;font-size:13px;">🖨️ Imprimer</button>
+      <button class="btn-sm btn-accent" onclick="window.print()" style="padding:9px 16px;font-size:13px;flex-shrink:0;">🖨️ Imprimer</button>
     </div>
     <div id="avg-table"></div>
   </div>
@@ -417,7 +508,14 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
 
 <!-- Bottom navigation -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" onclick="showTab('saisie',this)" id="nav-saisie">
+  <button class="nav-btn active" onclick="showTab('jouer',this)" id="nav-jouer">
+    <div class="nav-icon">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+      <div class="nav-dot"></div>
+    </div>
+    Jouer
+  </button>
+  <button class="nav-btn" onclick="showTab('saisie',this)" id="nav-saisie">
     <div class="nav-icon">
       <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
       <div class="nav-dot"></div>
@@ -452,14 +550,22 @@ td strong { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 
 
 <script>
 let data = JSON.parse(localStorage.getItem('wedge_v2') || '{"clubs":["PW","GW 50°","SW 56°","LW 60°"],"shots":[]}');
+const AMP_OPTIONS = ['5h – 7h','4h – 8h','3h – 9h','2h – 10h','1h – 12h (plein)'];
+let selectedClub = null;
+let selectedAmp = AMP_OPTIONS[2];
+let fltClubVal = '';
+let fltAmpVal = '';
+let tblClubVal = '';
+let toastTimer = null;
 
 function save() { localStorage.setItem('wedge_v2', JSON.stringify(data)); updateHeader(); }
 
-function showToast(msg) {
+function showToast(html) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.innerHTML = html;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function updateHeader() {
@@ -486,14 +592,147 @@ function windBadge(dir, str) {
 }
 
 function refreshSelects() {
-  ['inp-club','flt-club','tbl-club'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const cur = el.value;
-    const prefix = id === 'inp-club' ? '' : '<option value="">Tous</option>';
-    el.innerHTML = prefix + data.clubs.map(c => `<option value="${c}">${c}</option>`).join('');
-    if (cur && [...el.options].some(o => o.value === cur)) el.value = cur;
+  renderClubChips();
+  renderFilterChips();
+  renderTblClubChips();
+}
+
+function renderFilterChips() {
+  if (fltClubVal && !data.clubs.includes(fltClubVal)) fltClubVal = '';
+  const clubEl = document.getElementById('flt-club-chips');
+  if (clubEl) {
+    const items = [{ v: '', l: 'Tous' }, ...data.clubs.map(c => ({ v: c, l: c }))];
+    clubEl.innerHTML = items.map(i => `<button type="button" class="club-chip${i.v===fltClubVal?' active':''}" onclick="setFltClub('${i.v.replace(/'/g,"\\'")}')">${i.l}</button>`).join('');
+  }
+  const ampEl = document.getElementById('flt-amp-chips');
+  if (ampEl) {
+    const items = [{ v: '', l: 'Toutes' }, ...AMP_OPTIONS.map(a => ({ v: a, l: a }))];
+    ampEl.innerHTML = items.map(i => `<button type="button" class="club-chip${i.v===fltAmpVal?' active':''}" onclick="setFltAmp('${i.v.replace(/'/g,"\\'")}')">${i.l}</button>`).join('');
+  }
+}
+
+function setFltClub(v) { fltClubVal = v; renderFilterChips(); renderStats(); }
+function setFltAmp(v) { fltAmpVal = v; renderFilterChips(); renderStats(); }
+
+function renderTblClubChips() {
+  if (tblClubVal && !data.clubs.includes(tblClubVal)) tblClubVal = '';
+  const el = document.getElementById('tbl-club-chips');
+  if (!el) return;
+  const items = [{ v: '', l: 'Tous' }, ...data.clubs.map(c => ({ v: c, l: c }))];
+  el.innerHTML = items.map(i => `<button type="button" class="club-chip${i.v===tblClubVal?' active':''}" onclick="setTblClub('${i.v.replace(/'/g,"\\'")}')">${i.l}</button>`).join('');
+}
+
+function setTblClub(v) { tblClubVal = v; renderTblClubChips(); renderAvgTable(); }
+
+function renderClubChips() {
+  const el = document.getElementById('club-chips');
+  if (!el) return;
+  if (!selectedClub || !data.clubs.includes(selectedClub)) selectedClub = data.clubs[0] || null;
+  if (!data.clubs.length) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--text3);">Ajoute un club dans l\'onglet Clubs</span>';
+    return;
+  }
+  el.innerHTML = data.clubs.map(c => `<button type="button" class="club-chip${c===selectedClub?' active':''}" onclick="selectClub('${c.replace(/'/g,"\\'")}')">${c}</button>`).join('');
+}
+
+function selectClub(c) {
+  selectedClub = c;
+  renderClubChips();
+}
+
+function renderAmpButtons() {
+  const el = document.getElementById('amp-buttons');
+  if (!el) return;
+  el.innerHTML = AMP_OPTIONS.map(a => {
+    const plein = a.includes('plein');
+    const label = a.replace(' (plein)','').split(' – ').join('<br>') + (plein ? '<br><span style="font-size:9px;">plein</span>' : '');
+    return `<button type="button" class="amp-btn${a===selectedAmp?' active':''}" onclick="selectAmp('${a.replace(/'/g,"\\'")}')">${label}</button>`;
+  }).join('');
+}
+
+function selectAmp(a) {
+  selectedAmp = a;
+  renderAmpButtons();
+}
+
+function stepDist(delta) {
+  const inp = document.getElementById('inp-dist');
+  const v = Math.max(0, (parseFloat(inp.value) || 0) + delta);
+  inp.value = v;
+}
+
+function stepPlayDist(delta) {
+  const inp = document.getElementById('play-dist');
+  const v = Math.max(0, (parseFloat(inp.value) || 0) + delta);
+  inp.value = v;
+}
+
+const WIND_PCT = { '0': 0, '1': 0.05, '2': 0.10, '3': 0.15, '4': 0.20 };
+const WIND_DIR_SIGN = { calme: 0, face: 1, 'arrière': -1, travers: 0.3, 'face-travers': 0.7, 'arrière-travers': -0.7 };
+const WIND_DIR_LABEL = { calme: 'Calme', face: 'Face', 'arrière': 'Arrière', travers: 'Travers', 'face-travers': 'Face-travers', 'arrière-travers': 'Arr.-travers' };
+
+function computeShot() {
+  const target = parseFloat(document.getElementById('play-dist').value);
+  const dir = document.getElementById('play-wind-dir').value;
+  const str = document.getElementById('play-wind-str').value;
+  const resEl = document.getElementById('play-result');
+
+  if (isNaN(target) || target <= 0) {
+    resEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">Entre une distance cible</div></div>';
+    return;
+  }
+
+  const dirSign = WIND_DIR_SIGN[dir] || 0;
+  const rawPct = (WIND_PCT[str] || 0) * Math.abs(dirSign);
+  const sign = Math.sign(dirSign);
+  const calmTarget = sign > 0 ? target / (1 - rawPct) : sign < 0 ? target / (1 + rawPct) : target;
+  const windFactor = sign > 0 ? (1 - rawPct) : sign < 0 ? (1 + rawPct) : 1;
+
+  const combos = [];
+  data.clubs.forEach(club => {
+    AMP_OPTIONS.forEach(amp => {
+      const shots = data.shots.filter(s => s.club === club && s.amp === amp);
+      if (!shots.length) return;
+      const calmShots = shots.filter(s => s.windDir === 'calme' || !s.windDir);
+      const basis = calmShots.length ? calmShots : shots;
+      combos.push({ club, amp, calmAvg: avg(basis.map(s => s.dist)), n: basis.length, isCalmOnly: calmShots.length > 0 });
+    });
   });
+
+  if (!combos.length) {
+    resEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">Pas encore assez de données — enregistre des coups dans l\'onglet Saisie</div></div>';
+    return;
+  }
+
+  combos.sort((a, b) => Math.abs(a.calmAvg - calmTarget) - Math.abs(b.calmAvg - calmTarget));
+  const top = combos.slice(0, 3);
+  const pctLabel = sign === 0 ? 'aucun ajustement' : (sign > 0 ? '−' : '+') + Math.round(rawPct * 100) + '% de distance';
+
+  resEl.innerHTML = `
+    <div class="section-heading">Suggestion (${WIND_DIR_LABEL[dir] || dir}${str !== '0' ? ' · force ' + str : ''})</div>
+    ${top.map((c, i) => {
+      const expected = Math.round(c.calmAvg * windFactor);
+      return `<div class="card"${i === 0 ? ' style="border-color:var(--accent);"' : ''}>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span class="badge badge-club" style="font-size:13px;">${c.club}</span>
+          <span class="badge-amp">${c.amp}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <span style="font-size:28px;font-weight:700;font-family:'DM Mono',monospace;color:${i === 0 ? 'var(--accent)' : 'var(--text)'};">${expected}</span>
+          <span style="font-size:13px;color:var(--text3);">m attendu</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">Moyenne habituelle ${c.isCalmOnly ? '(calme)' : '(tous vents, pas de données calme)'} : ${Math.round(c.calmAvg)} m sur ${c.n} coup${c.n !== 1 ? 's' : ''}</div>
+      </div>`;
+    }).join('')}
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px;">Ajustement vent appliqué : ${pctLabel}</div>
+  `;
+}
+
+function toggleMore() {
+  const f = document.getElementById('more-fields');
+  const open = f.classList.toggle('open');
+  document.getElementById('more-label').textContent = open ? 'Masquer les options' : "Plus d'options (vent, note)";
+  document.getElementById('more-chevron').classList.toggle('open', open);
 }
 
 function addClub() {
@@ -532,19 +771,29 @@ function renderClubs() {
 }
 
 function addShot() {
-  const club = document.getElementById('inp-club').value;
-  const amp = document.getElementById('inp-amp').value;
+  const club = selectedClub;
+  const amp = selectedAmp;
   const dist = parseFloat(document.getElementById('inp-dist').value);
   const windDir = document.getElementById('inp-wind-dir').value;
   const windStr = document.getElementById('inp-wind-str').value;
   const note = document.getElementById('inp-note').value.trim();
-  if (!club || isNaN(dist) || dist <= 0) { showToast('⚠️ Club et distance requis'); return; }
+  if (!club) { showToast('⚠️ Choisis un club'); return; }
+  if (!amp) { showToast('⚠️ Choisis une amplitude'); return; }
+  if (isNaN(dist) || dist <= 0) { showToast('⚠️ Distance requise'); return; }
   data.shots.unshift({ club, amp, dist, windDir, windStr, note, date: new Date().toLocaleDateString('fr-FR') });
   save();
   document.getElementById('inp-dist').value = '';
   document.getElementById('inp-note').value = '';
-  showToast(`✓ ${dist} m enregistré !`);
+  showToast(`✓ ${dist} m enregistré <button onclick="undoLastShot()" style="background:none;border:none;color:#0d1f12;text-decoration:underline;font-weight:700;font-family:inherit;font-size:13px;cursor:pointer;padding:0;">Annuler</button>`);
   renderRecent();
+}
+
+function undoLastShot() {
+  data.shots.shift();
+  save();
+  renderRecent();
+  clearTimeout(toastTimer);
+  document.getElementById('toast').classList.remove('show');
 }
 
 function removeShot(i) {
@@ -579,12 +828,10 @@ function renderRecent() {
 }
 
 function filterShots() {
-  const club = document.getElementById('flt-club')?.value || '';
-  const amp = document.getElementById('flt-amp')?.value || '';
   const wind = document.getElementById('flt-wind')?.value || '';
   return data.shots.filter(s =>
-    (!club || s.club === club) &&
-    (!amp || s.amp === amp) &&
+    (!fltClubVal || s.club === fltClubVal) &&
+    (!fltAmpVal || s.amp === fltAmpVal) &&
     (!wind || s.windDir === wind)
   );
 }
@@ -628,8 +875,8 @@ function renderStats() {
 function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
 
 function renderAvgTable() {
-  const clubFilter = document.getElementById('tbl-club')?.value || '';
-  const amps = ['7h – 9h','9h – 10h30','10h30 – 12h (plein)','3h – 5h','5h – 7h'];
+  const clubFilter = tblClubVal;
+  const amps = AMP_OPTIONS;
   const winds = [
     { key: 'calme', label: 'Calme' },
     { key: 'face', label: 'Face' },
@@ -670,17 +917,34 @@ function renderAvgTable() {
   document.getElementById('avg-table').innerHTML = html;
 }
 
-function exportData() {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+async function exportData() {
+  const filename = 'wedge_stats_backup.json';
+  const jsonStr = JSON.stringify(data, null, 2);
+  if (window.claude && window.claude.use) {
+    try {
+      const downloads = await window.claude.use('downloads');
+      if (downloads) {
+        await downloads.save({ filename, data: jsonStr });
+        showToast('✓ Export téléchargé');
+        return;
+      }
+    } catch (e) {
+      if (e && e.code === 'declined') return;
+      showToast('⚠️ Export impossible ici');
+      return;
+    }
+  }
+  const blob = new Blob([jsonStr], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'wedge_stats_backup.json';
+  a.download = filename;
   a.click();
   showToast('✓ Export téléchargé');
 }
 
 // Init
 refreshSelects();
+renderAmpButtons();
 renderRecent();
 updateHeader();
 </script>

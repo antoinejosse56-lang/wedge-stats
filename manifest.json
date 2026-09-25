@@ -1,0 +1,23 @@
+{
+  "name": "WedgeStats",
+  "short_name": "WedgeStats",
+  "start_url": "https://antoinejosse56-lang.github.io/wedge-stats/",
+  "scope": "https://antoinejosse56-lang.github.io/wedge-stats/",
+  "display": "standalone",
+  "background_color": "#0d1f12",
+  "theme_color": "#0d2818",
+  "icons": [
+    {
+      "src": "https://antoinejosse56-lang.github.io/wedge-stats/icon192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://antoinejosse56-lang.github.io/wedge-stats/icon512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
