@@ -1,7 +1,8 @@
 {
+  "id": "/wedge-stats/app-v2",
   "name": "WedgeStats",
   "short_name": "WedgeStats",
-  "start_url": "https://antoinejosse56-lang.github.io/wedge-stats/",
+  "start_url": "https://antoinejosse56-lang.github.io/wedge-stats/?v=2",
   "scope": "https://antoinejosse56-lang.github.io/wedge-stats/",
   "display": "standalone",
   "background_color": "#0d1f12",
