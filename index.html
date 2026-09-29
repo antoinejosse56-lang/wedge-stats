@@ -764,10 +764,31 @@ function renderClubs() {
         <span class="badge badge-club">${c}</span>
         <span class="club-count">${count} coup${count !== 1 ? 's' : ''}</span>
       </div>
-      <button class="btn-sm btn-danger" onclick="removeClub(${i})">Supprimer</button>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <button class="btn-sm btn-accent" onclick="renameClub(${i})">Renommer</button>
+        <button class="btn-sm btn-danger" onclick="removeClub(${i})">Supprimer</button>
+      </div>
     </div>`;
   }).join('');
   updateHeader();
+}
+
+function renameClub(i) {
+  const oldName = data.clubs[i];
+  const newName = prompt('Nouveau nom du club :', oldName);
+  if (newName === null) return;
+  const trimmed = newName.trim();
+  if (!trimmed || trimmed === oldName) return;
+  if (data.clubs.includes(trimmed)) { showToast('⚠️ Ce nom existe déjà'); return; }
+  data.clubs[i] = trimmed;
+  data.shots.forEach(s => { if (s.club === oldName) s.club = trimmed; });
+  if (selectedClub === oldName) selectedClub = trimmed;
+  if (fltClubVal === oldName) fltClubVal = trimmed;
+  if (tblClubVal === oldName) tblClubVal = trimmed;
+  save();
+  renderClubs();
+  refreshSelects();
+  showToast('✓ Club renommé');
 }
 
 function addShot() {
